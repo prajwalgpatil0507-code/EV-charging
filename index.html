@@ -2,60 +2,129 @@
 <html>
 <head>
     <title>EV Charging Station</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
         body {
             font-family: Arial, sans-serif;
+            background: #f2f2f2;
             text-align: center;
-            margin-top: 50px;
-            background-color: #f4f4f4;
+            padding: 20px;
         }
 
         .container {
+            max-width: 400px;
+            margin: auto;
             background: white;
             padding: 20px;
-            margin: auto;
-            max-width: 400px;
             border-radius: 10px;
             box-shadow: 0 0 10px gray;
         }
 
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+
         button {
+            background: green;
+            color: white;
+            border: none;
             padding: 12px 25px;
             font-size: 18px;
+            border-radius: 5px;
             cursor: pointer;
         }
 
-        #otp {
+        #otpBox {
+            display: none;
             margin-top: 20px;
-            font-size: 24px;
+            font-size: 22px;
             color: green;
             font-weight: bold;
+        }
+
+        h1 {
+            color: #0a7f3f;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+
     <h1>EV Charging Station</h1>
 
-    <p>Scan QR → Pay → Get OTP</p>
+    <input type="text" id="vehicle" placeholder="Vehicle Number">
+
+    <select id="amount">
+        <option value="10">₹10</option>
+        <option value="20">₹20</option>
+        <option value="50">₹50</option>
+        <option value="100">₹100</option>
+    </select>
+
+    <br><br>
 
     <button onclick="payNow()">Pay Now</button>
 
-    <div id="otp"></div>
+    <div id="otpBox"></div>
+
 </div>
 
 <script>
+
 function payNow() {
-    alert("Payment Successful!");
 
-    let otp = Math.floor(100000 + Math.random() * 900000);
+    let vehicle = document.getElementById("vehicle").value;
 
-    document.getElementById("otp").innerHTML =
-        "Your OTP: " + otp;
+    if(vehicle == ""){
+        alert("Enter Vehicle Number");
+        return;
+    }
+
+    let amount = document.getElementById("amount").value;
+
+    var options = {
+
+        "key": "rzp_test_SvsUjl0KyiEFNy",
+
+        "amount": amount * 100,
+
+        "currency": "INR",
+
+        "name": "EV Charging Station",
+
+        "description": "Charging Payment",
+
+        "handler": function (response) {
+
+            let otp =
+            Math.floor(100000 + Math.random() * 900000);
+
+            document.getElementById("otpBox").style.display = "block";
+
+            document.getElementById("otpBox").innerHTML =
+                "Payment Successful<br><br>Your OTP: " + otp;
+
+        },
+
+        "theme": {
+            "color": "#0a7f3f"
+        }
+
+    };
+
+    var rzp1 = new Razorpay(options);
+
+    rzp1.open();
+
 }
+
 </script>
 
 </body>
